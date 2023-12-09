@@ -15,7 +15,7 @@ Ear recognition is a biometric modality that has attracted increasing attention 
 
 - __Practical part__
 
-  - Base selection and preparation: Selecting one of the publicly available ear bases and dividing the base into a set for training and testing.
+  - Database selection and preparation: Selecting one of the publicly available ear bases and dividing the base into a set for training and testing.
   - Image preprocessing: Noise removal and ear feature enhancement using image filtering and feature point extraction.
   - Implementation of the selected machine learning method: Implementation of some of the deep learning techniques such as Convolutional Neural Network (CNN), Recurrent Neural Network (RNN) and others. The model is trained using pre-processed images of the ear on which the identity of the person is marked.
   - Performance evaluation of the chosen method: Using metrics such as False Acceptance Rate (FAR), False Rejection Rate (FRR) and others. Evaluation is needed run on a separate test data set to ensure unbiased the results.
