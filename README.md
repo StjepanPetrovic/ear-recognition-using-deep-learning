@@ -10,7 +10,7 @@ It's recommended to create a virtual environment to install the project's depend
 2. In terminal navigate to your project directory and create a virtual environment with: `virtualenv env`
 3. Activate the virtual environment: `source env/bin/activate` (You should see (env) prefixed to your terminal indicating that the virtual environment is now active.)
 
-Install the project's dependencies with: `pip install opencv-python numpy tqdm scikit-learn` 
+Install the project's dependencies with: `pip install opencv-python numpy tqdm scikit-learn keras` 
 
 ## Database selection and preparation:
 Ear images are downloaded from https://webctim.ulpgc.es/research_works/ami_ear_database/ and stored in the `data/01_raw` folder.

@@ -91,6 +91,3 @@ if __name__ == '__main__':
 
     resize_images('../../data/01_raw/')
     convert_to_grayscale('../../data/02_resized/')
-    ((img_training_set, label_training_set),
-     (img_validation_set, label_validation_set),
-     (img_test_set, label_test_set)) = split_dataset('../../data/03_grayscale/')
