@@ -55,30 +55,6 @@ def convert_to_grayscale(resized_data_directory):
     print("Converting to grayscale is completed.")
 
 
-def normalize_images(grayscale_data_directory):
-    grayscale_ear_images = os.listdir(grayscale_data_directory)
-
-    normalized_data_directory = '../../data/04_normalized'
-
-    if not os.path.exists(normalized_data_directory):
-        os.makedirs(normalized_data_directory)
-
-    for filename in tqdm(grayscale_ear_images):
-        img_path = os.path.join(grayscale_data_directory, filename)
-
-        filename = filename.split('.')[0] + '.npy'
-
-        new_img_path = os.path.join(normalized_data_directory, filename)
-
-        img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-
-        normalized_img = cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-
-        np.save(new_img_path, normalized_img)
-
-    print("Normalizing is completed.")
-
-
 def split_dataset(grayscale_data_directory):
     grayscale_imgs = os.listdir(grayscale_data_directory)
     grayscale_imgs.sort()
@@ -94,6 +70,8 @@ def split_dataset(grayscale_data_directory):
 
         img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 
+        img = normalize_image(img)
+
         imgs_array.append(img)
 
     imgs_array = np.array(imgs_array)
@@ -105,11 +83,14 @@ def split_dataset(grayscale_data_directory):
     return (img_train, label_train), (img_val, label_val), (img_test, label_test)
 
 
+def normalize_image(img):
+    return cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+
+
 if __name__ == '__main__':
 
     resize_images('../../data/01_raw/')
     convert_to_grayscale('../../data/02_resized/')
-    normalize_images('../../data/03_grayscale/')
     ((img_training_set, label_training_set),
      (img_validation_set, label_validation_set),
      (img_test_set, label_test_set)) = split_dataset('../../data/03_grayscale/')
