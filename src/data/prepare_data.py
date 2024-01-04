@@ -62,11 +62,19 @@ def split_dataset(grayscale_data_directory):
     imgs_array = []
     labels = []
 
+    current_label = 0
+    last_label = 0
+
     for filename in tqdm(grayscale_imgs):
         img_path = os.path.join(grayscale_data_directory, filename)
 
-        label = filename.split('_')[0]
-        labels.append(int(label))
+        label_from_image_name = int(filename.split('_')[0])
+
+        if last_label != label_from_image_name:
+            last_label = label_from_image_name
+            current_label += 1
+
+        labels.append(current_label)
 
         img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 
