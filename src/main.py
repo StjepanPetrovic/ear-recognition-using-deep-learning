@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
+from keras.src.utils.np_utils import to_categorical
 
 from model.model_cnn import create_model
 from data.prepare_data import split_dataset, normalize_image
@@ -11,11 +11,17 @@ def main():
      (img_validation_set, label_validation_set),
      (img_test_set, label_test_set)) = split_dataset('../data/03_grayscale/')
 
-    training_labels = np.asarray(label_training_set).astype('float32').reshape((-1, 1))
-    test_labels = np.asarray(label_test_set).astype('float32').reshape((-1, 1))
-    validation_labels = np.asarray(label_validation_set).astype('float32').reshape((-1, 1))
+    label_training_set = np.where(label_training_set > 49, 50, label_training_set)
+    label_validation_set = np.where(label_validation_set > 49, 50, label_validation_set)
+    label_test_set = np.where(label_test_set > 49, 50, label_test_set)
 
-    model = create_model((182, 128, 1), 106)
+    num_classes = 51
+
+    training_labels = to_categorical(label_training_set, num_classes)
+    test_labels = to_categorical(label_test_set, num_classes)
+    validation_labels = to_categorical(label_validation_set, num_classes)
+
+    model = create_model((182, 128, 1), num_classes)
 
     print(model.summary())
 
