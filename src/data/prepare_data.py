@@ -85,8 +85,23 @@ def split_dataset(grayscale_data_directory):
     imgs_array = np.array(imgs_array)
     labels = np.array(labels)
 
-    img_train, img_temp, label_train, label_temp = train_test_split(imgs_array, labels, test_size=0.4, random_state=42)
-    img_val, img_test, label_val, label_test = train_test_split(img_temp, label_temp, test_size=0.5, random_state=42)
+    img_train, img_temp, label_train, label_temp = train_test_split(
+        imgs_array,
+        labels,
+        test_size=0.4,
+        random_state=42,
+        shuffle=True,
+        stratify=labels
+    )
+
+    img_val, img_test, label_val, label_test = train_test_split(
+        img_temp,
+        label_temp,
+        test_size=0.5,
+        random_state=42,
+        shuffle=True,
+        stratify=label_temp
+    )
 
     return (img_train, label_train), (img_val, label_val), (img_test, label_test)
 

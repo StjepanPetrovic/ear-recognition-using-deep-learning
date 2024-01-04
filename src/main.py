@@ -1,9 +1,9 @@
-import cv2
 import numpy as np
 from keras.src.utils.np_utils import to_categorical
 
 from model.model_cnn import create_model
-from data.prepare_data import split_dataset, normalize_image
+from data.prepare_data import split_dataset
+from src.plot import plot
 
 
 def main():
@@ -25,49 +25,25 @@ def main():
 
     print(model.summary())
 
-    EPOCHS = 10
+    epochs = 10
 
-    history = model.fit( # ovdje PUCAAAAAAAAAAAAAA nesto nije ok
+    history = model.fit(
         img_training_set,
         training_labels,
-        epochs=EPOCHS,
-        validation_data=(img_test_set, test_labels)
+        epochs=epochs,
+        validation_data=(img_validation_set, validation_labels)
     )
 
-    loss, accuracy = model.evaluate(img_validation_set, validation_labels)
+    loss, accuracy = model.evaluate(img_test_set, test_labels)
 
     print('Test loss:', loss)
     print('Test accuracy:', accuracy)
 
-    # write code for importing new image and predicting the class
-    new_img = cv2.imread('../data/new_data.jpg', cv2.IMREAD_GRAYSCALE)
-    new_img = normalize_image(new_img)
+    model.save('model.keras')
 
-    predictions = model.predict(new_img)
-    predicted_label = np.argmax(predictions, axis=1)
-
-    # Plot training & validation accuracy values
-    plt.figure(figsize=(12, 4))
-    plt.subplot(1, 2, 1)
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
-    plt.title('Model accuracy')
-    plt.ylabel('Accuracy')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Test'], loc='upper left')
-
-    # Plot training & validation loss values
-    plt.subplot(1, 2, 2)
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('Model loss')
-    plt.ylabel('Loss')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Test'], loc='upper left')
-
-    plt.tight_layout()
-    plt.savefig('reports/figures/report_plot.png', dpi=300)
-    plt.close()
+    plot(history)
 
 
-main()
+if __name__ == '__main__':
+
+    main()
