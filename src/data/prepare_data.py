@@ -62,6 +62,9 @@ def convert_to_grayscale(augmented_data_directory, resized_data_directory):
 
 
 def augment_images(input_dir, output_dir):
+    NUMBER_OF_AUGMENTED_IMAGES = 100
+    NUMBER_OF_PERSONS_AS_CLASSES = 4
+
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -74,7 +77,7 @@ def augment_images(input_dir, output_dir):
     for filename in tqdm(os.listdir(input_dir)):
         person_num = int(filename.split('_')[0])
 
-        if person_num < 4:
+        if person_num < NUMBER_OF_PERSONS_AS_CLASSES:
             img_path = os.path.join(input_dir, filename)
 
             # Load image and reshape it to a 4D tensor
@@ -82,15 +85,13 @@ def augment_images(input_dir, output_dir):
             x = img_to_array(image)
             x = x.reshape((1,) + x.shape)
 
-            # Iterate over augmented images and save them to the output directory
             i = 0
             for batch in datagen.flow(x, batch_size=1):
                 aug_img_path = os.path.join(output_dir, filename + '_aug_' + str(i) + '.jpg')
                 save_img(aug_img_path, batch[0])
                 i += 1
 
-                # here we define how many augmented images for one original image we want
-                if i >= 100:
+                if i >= NUMBER_OF_AUGMENTED_IMAGES:
                     break
 
     print("Augmenting is completed.")

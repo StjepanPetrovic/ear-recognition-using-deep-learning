@@ -16,10 +16,55 @@ If you want to use PyCharm IDE for running scripts on click you need to install 
 ![img.png](images-for-readme/new-interpreter-for-virt-env.png)
 
 ## Database selection and preparation:
+
 Ear images are downloaded from https://webctim.ulpgc.es/research_works/ami_ear_database/ and stored in the `data/01_raw` folder.
 
-In terminal go to `src/data` directory and run `python3 prepare_data.py` to prepare the data for model, or you can open script `prepare_data.py` with PyCharm and click green triangle to run the script. The script will:
+In terminal go to `src/data/` directory and run `python3 prepare_data.py` to prepare the data for model, or you can open script `prepare_data.py` with PyCharm and click green triangle to run the script. The script will:
+- delete images of left ears,
 - resize images to 128 pixels in width and store it in `data/02_resized` directory,
-- resized images will convert to grayscale and stored in `data/03_grayscale` directory,
-- normalize to have values between 0 and 1 and saved as numpy arrays in `data/04_normalized` directory,
-- take grayscale images and create arrays of images and labels split for model to train, test and validate.
+- augment images and store it in `data/03_augmented` directory,
+- resized images and augmented images will convert to grayscale and stored in `data/04_augmented` directory.
+
+## Working with model:
+
+In terminal go to `src/` directory and run `python3 main.py`, or you can open script `prepare_data.py` with PyCharm and click green triangle to run the script. The script will:
+- split data for training, validation and test set, and preprocess labels for model training:
+  - There is 5 labels/classes in total. Labels/classes are representing 4 persons:
+    - "0" person, 
+    - "1" person, 
+    - "2" person, 
+    - "3" person,
+    - and there is one more label "4" for unknown person.,
+- work with model: create model, train model, evaluate model, save model, predict with model,
+- plot model training history, statistics (FAR, FRR) and plot confusion matrix for accuracy visualization.
+
+## Predicting with model:
+
+In terminal go to `src/` directory and run `python3 predict.py`, or you can open script `predict.py` with PyCharm and click green triangle to run the script. The script will:
+- load model,
+- read image from `data/new_data.jpg`,
+- predict with model,
+- print predicted label.
+
+## Performance evaluation:
+
+There is 5 labels/classes in total. Labels/classes are representing 4 persons:
+- "0" person, 
+- "1" person, 
+- "2" person, 
+- "3" person,
+- and there is one more label "4" for unknown person.
+
+### The model achieved 97.67% accuracy on test set. The confusion matrix is shown below:
+
+<img src="images-for-readme/confusion_matrix.png" width="700" alt="">
+
+### Metrics such as False Acceptance Rate (FAR), False Rejection Rate (FRR) and others are shown below:
+
+![img.png](images-for-readme/metrics.png)
+
+![img.png](images-for-readme/overall_metrics.png)
+
+### Histogram of model training history is shown below:
+
+<img src="src/reports/report_plot_15_100aug_images_25_epoha.png" width="900">

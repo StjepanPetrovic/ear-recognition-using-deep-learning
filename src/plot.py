@@ -65,3 +65,26 @@ def plot_confusion_matrix(cm,
     plt.xlabel('Predicted label')
     plt.savefig(f'{dirname}/confusion_matrix.png', dpi=300)
     plt.close()
+
+
+def print_FAR_FRR(cm):
+    num_classes = cm.shape[0]
+    for i in range(num_classes):
+        # get true positives, false negatives, false positives, and true negatives
+        TP = cm[i, i]
+        FN = cm[i, :].sum() - TP
+        FP = cm[:, i].sum() - TP
+        TN = cm.sum() - TP - FN - FP
+
+        # calculate FAR and FRR
+        FAR = FP / (FP + TN) if FP + TN > 0 else 0
+        FRR = FN / (FN + TP) if FN + TP > 0 else 0
+
+        print(f"Class {i}")
+        print(f"True Positives (TP): {TP}")
+        print(f"False Negatives (FN): {FN}")
+        print(f"False Positives (FP): {FP}")
+        print(f"True Negatives (TN): {TN}")
+        print(f"False Acceptance Rate (FAR): {FAR}")
+        print(f"False Rejection Rate (FRR): {FRR}")
+        print("---------------------------------")
