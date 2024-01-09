@@ -53,12 +53,11 @@ def main():
         verbose=2
     )
 
-    print(np.round(predictions))
-
-    print('Test loss:', loss)
-    print('Test accuracy:', accuracy)
-
     model.save('model.keras')
+
+    cm = confusion_matrix(y_true=label_test_set, y_pred=np.argmax(predictions, axis=-1))
+    cm_plot_labels = ['0', '1', '2', '3', '4']
+    plot_confusion_matrix(cm=cm, classes=cm_plot_labels, dirname='reports/')
 
     plot(history)
 
