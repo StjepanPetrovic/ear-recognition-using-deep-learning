@@ -1,8 +1,8 @@
 import os
+
 import cv2
-import numpy as np
 from tqdm import tqdm
-from sklearn.model_selection import train_test_split
+from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array, save_img
 
 
 def resize_images(raw_data_directory):
@@ -33,16 +33,22 @@ def resize_images(raw_data_directory):
     print("Resizing is completed.")
 
 
-def convert_to_grayscale(resized_data_directory):
+def convert_to_grayscale(augmented_data_directory, resized_data_directory):
+    augmented_ear_images = os.listdir(augmented_data_directory)
     resized_ear_images = os.listdir(resized_data_directory)
 
-    grayscale_data_directory = '../../data/03_grayscale'
+    all_images = augmented_ear_images + resized_ear_images
+
+    grayscale_data_directory = '../../data/04_grayscale'
 
     if not os.path.exists(grayscale_data_directory):
         os.makedirs(grayscale_data_directory)
 
-    for filename in tqdm(resized_ear_images):
-        img_path = os.path.join(resized_data_directory, filename)
+    for filename in tqdm(all_images):
+        if filename in augmented_ear_images:
+            img_path = os.path.join(augmented_data_directory, filename)
+        else:
+            img_path = os.path.join(resized_data_directory, filename)
 
         img = cv2.imread(img_path)
 
@@ -55,32 +61,40 @@ def convert_to_grayscale(resized_data_directory):
     print("Converting to grayscale is completed.")
 
 
-def split_dataset(grayscale_data_directory):
-    grayscale_imgs = os.listdir(grayscale_data_directory)
-    grayscale_imgs.sort()
+def augment_images(input_dir, output_dir):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    imgs_array = []
-    labels = []
+    datagen = ImageDataGenerator(
+        rotation_range=40,
+        zoom_range=0.2,
+        horizontal_flip=True,
+        brightness_range=[0.8, 1.2])
 
-    current_label = 0
-    last_label = 0
+    for filename in tqdm(os.listdir(input_dir)):
+        person_num = int(filename.split('_')[0])
 
-    for filename in tqdm(grayscale_imgs):
-        img_path = os.path.join(grayscale_data_directory, filename)
+        if person_num < 4:
+            img_path = os.path.join(input_dir, filename)
 
-        label_from_image_name = int(filename.split('_')[0])
+            # Load image and reshape it to a 4D tensor
+            image = load_img(img_path)
+            x = img_to_array(image)
+            x = x.reshape((1,) + x.shape)
 
-        if last_label != label_from_image_name:
-            last_label = label_from_image_name
-            current_label += 1
+            # Iterate over augmented images and save them to the output directory
+            i = 0
+            for batch in datagen.flow(x, batch_size=1):
+                aug_img_path = os.path.join(output_dir, filename + '_aug_' + str(i) + '.jpg')
+                save_img(aug_img_path, batch[0])
+                i += 1
 
-        labels.append(current_label)
+                # here we define how many augmented images for one original image we want
+                if i >= 20:
+                    break
 
-        img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    print("Augmenting is completed.")
 
-        img = normalize_image(img)
-
-        imgs_array.append(img)
 
     imgs_array = np.array(imgs_array)
     labels = np.array(labels)
@@ -113,4 +127,7 @@ def normalize_image(img):
 if __name__ == '__main__':
 
     resize_images('../../data/01_raw/')
-    convert_to_grayscale('../../data/02_resized/')
+
+    augment_images('../../data/02_resized', '../../data/03_augmented/')
+
+    convert_to_grayscale('../../data/03_augmented/', '../../data/02_resized')
