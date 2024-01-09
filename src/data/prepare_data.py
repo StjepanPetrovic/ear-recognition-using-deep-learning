@@ -96,35 +96,18 @@ def augment_images(input_dir, output_dir):
     print("Augmenting is completed.")
 
 
-    imgs_array = np.array(imgs_array)
-    labels = np.array(labels)
+def delete_left_ears(raw_data_directory):
+    for filename in tqdm(os.listdir(raw_data_directory)):
+        if 'left' in filename:
+            file_path = os.path.join(raw_data_directory, filename)
+            os.remove(file_path)
 
-    img_train, img_temp, label_train, label_temp = train_test_split(
-        imgs_array,
-        labels,
-        test_size=0.4,
-        random_state=42,
-        shuffle=True,
-        stratify=labels
-    )
-
-    img_val, img_test, label_val, label_test = train_test_split(
-        img_temp,
-        label_temp,
-        test_size=0.5,
-        random_state=42,
-        shuffle=True,
-        stratify=label_temp
-    )
-
-    return (img_train, label_train), (img_val, label_val), (img_test, label_test)
-
-
-def normalize_image(img):
-    return cv2.normalize(img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+    print("Deleting left ears is completed.")
 
 
 if __name__ == '__main__':
+
+    delete_left_ears('../../data/01_raw/')
 
     resize_images('../../data/01_raw/')
 
