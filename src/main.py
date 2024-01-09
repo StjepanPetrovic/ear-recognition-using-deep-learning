@@ -1,21 +1,36 @@
 import numpy as np
 from keras.src.utils.np_utils import to_categorical
+from sklearn.metrics import confusion_matrix
 
 from model.model_cnn import create_model
-from data.prepare_data import split_dataset
-from src.plot import plot
+from data.split_data_set import split_dataset
+from src.plot import plot, plot_confusion_matrix
 
 
 def main():
     ((img_training_set, label_training_set),
      (img_validation_set, label_validation_set),
-     (img_test_set, label_test_set)) = split_dataset('../data/03_grayscale/')
+     (img_test_set, label_test_set)) = split_dataset('../data/04_grayscale/')
 
-    label_training_set = np.where(label_training_set > 49, 50, label_training_set)
-    label_validation_set = np.where(label_validation_set > 49, 50, label_validation_set)
-    label_test_set = np.where(label_test_set > 49, 50, label_test_set)
+    num_classes = 5
 
-    num_classes = 51
+    label_training_set = np.where(
+        label_training_set > num_classes - 2,
+        num_classes - 1,
+        label_training_set
+    )
+
+    label_validation_set = np.where(
+        label_validation_set > num_classes - 2,
+        num_classes - 1,
+        label_validation_set
+    )
+
+    label_test_set = np.where(
+        label_test_set > num_classes - 2,
+        num_classes - 1,
+        label_test_set
+    )
 
     training_labels = to_categorical(label_training_set, num_classes)
     test_labels = to_categorical(label_test_set, num_classes)
@@ -25,16 +40,20 @@ def main():
 
     print(model.summary())
 
-    epochs = 10
-
     history = model.fit(
-        img_training_set,
-        training_labels,
-        epochs=epochs,
-        validation_data=(img_validation_set, validation_labels)
+        x=img_training_set,
+        y=training_labels,
+        epochs=10,
+        validation_data=(img_validation_set, validation_labels),
+        verbose=2
     )
 
-    loss, accuracy = model.evaluate(img_test_set, test_labels)
+    predictions = model.predict(
+        x=img_test_set,
+        verbose=2
+    )
+
+    print(np.round(predictions))
 
     print('Test loss:', loss)
     print('Test accuracy:', accuracy)

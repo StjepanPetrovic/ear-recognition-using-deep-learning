@@ -2,11 +2,11 @@ import numpy as np
 from keras.models import load_model
 import cv2
 
-from src.data.prepare_data import normalize_image
+from src.data.split_data_set import normalize_image
 
 if __name__ == '__main__':
 
-    model = load_model('model.keras')
+    model = load_model('model_1.keras')
 
     new_img = cv2.imread('../data/new_data.jpg', cv2.IMREAD_GRAYSCALE)
     new_img = normalize_image(new_img)
