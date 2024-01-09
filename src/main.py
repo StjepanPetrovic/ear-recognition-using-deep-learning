@@ -43,7 +43,7 @@ def main():
     history = model.fit(
         x=img_training_set,
         y=training_labels,
-        epochs=10,
+        epochs=25,
         validation_data=(img_validation_set, validation_labels),
         verbose=2
     )

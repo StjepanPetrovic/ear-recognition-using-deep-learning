@@ -90,7 +90,7 @@ def augment_images(input_dir, output_dir):
                 i += 1
 
                 # here we define how many augmented images for one original image we want
-                if i >= 20:
+                if i >= 100:
                     break
 
     print("Augmenting is completed.")
